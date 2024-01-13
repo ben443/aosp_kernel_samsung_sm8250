@@ -1,0 +1,38 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+
+      - name: Install CMake
+        run: sudo apt-get install cmake
+
+      - name: Install required packages
+        run: sudo apt-get install -y build-essential libssl-dev libncurses5-dev bc
+
+      - name: Compile Android Kernel
+        run: |
+          git clone https://github.com/samsung-galaxy-s20fe-5g/kernel.git
+          cd kernel
+          make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
+          make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j$(nproc)
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: kernel
+          path: kernel/arch/arm64/boot/Image.gz-dtb
