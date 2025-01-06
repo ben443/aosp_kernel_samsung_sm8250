@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-kernel:
+    name: Build Kernel
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Build
+        uses: dabao1955/kernel_build_action@main
+        with:
+          kernel-url: https://github.com/ben443/samsung_galaxy_s20fe_ubp
+          kernel-branch: Arrow-13.0-new
+          config: r8q_defconfig
+          arch: arm64
+          aosp-gcc: true
+          aosp-clang: true
+          android-version: 12
+          aosp-clang-version: r383902
+          nethunter: true
